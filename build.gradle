@@ -1,0 +1,81 @@
+import groovyx.gpars.GParsPool
+
+//ext.startTime = System.currentTimeMillis()
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.codehaus.gpars:gpars:1.1.0"
+    }
+}
+
+version '1.0-SNAPSHOT'
+apply plugin: 'java'
+//apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.projectlombok:lombok:1.16.18'
+    testCompile "org.codehaus.groovy:groovy-all:2.1.0"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile 'org.mockito:mockito-core:2.10.0'
+}
+
+//def concurrentMethod(int index, String threadName) {
+//    logger.quiet "${System.currentTimeMillis()}: Before launch of process $threadName"
+////    def classpath = sourceSets.main.runtimeClasspath.getAsPath()
+////    logger.quiet "classpath: ${sourceSets.main.runtimeClasspath.getAsPath()}"
+////    def main = 'myscript'
+////    def args = [index.toString()].join(" ")
+////    def process = "java -cp $classpath $main $args".execute()
+////    process.waitFor()
+////    logger.quiet "${System.currentTimeMillis()}: Process Text: ${process.text}"
+////    logger.quiet "${System.currentTimeMillis()}: Process Error: ${process.err}"
+//
+//    logger.quiet "Process $threadName completed"
+//}
+//
+//String getThreadName(names) {
+//    String currentName = Thread.currentThread().name
+//    if (!names.contains(currentName)) names << currentName
+//
+//    "t${names.indexOf(currentName).toString().padLeft(2, '0')}"
+//}
+//
+//task run << {
+//    def cores   = Runtime.runtime.availableProcessors()
+//    def threads = 10
+//    logger.quiet "${System.currentTimeMillis()}:     > Using $threads threads on $cores cores..."
+//    def names = []
+//    GParsPool.withPool(threads) {
+//        [3000, 1000, 2000, 500].eachParallel {
+//            def name = getThreadName(names)
+//            concurrentMethod(it, name)
+//        }
+//    }
+//    logger.quiet("${System.currentTimeMillis()}: Run complete!")
+//}
+
+def doit(numbers) {
+    GParsPool.withPool {
+        numbers.eachParallel { number ->
+            def wait = (long) new Random().nextDouble() * 1000
+            println "in closure " + number
+            this.sleep wait
+        }
+    }
+}
+
+task showDate{
+        doLast {
+            doit([1,2,3])
+        }
+}
